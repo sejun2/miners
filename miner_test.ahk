@@ -9,4 +9,3 @@ miner := new EpiloriaMiner(["muro", "delin", "ampi", "galid"])
 
 miner.move()
 miner.mine()
-
