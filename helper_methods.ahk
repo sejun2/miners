@@ -14,6 +14,11 @@ Get_inven(){
 	return inven
 	}
 
+is_moving(){
+    is_moving := ReadMemory(ReadMemory(ReadMemory(0x0058eb04)+0x18)+0x174)
+    return is_moving
+}
+
 Get_jElancia_Titles(){
 	jElanciaArray := []
 	Winget, jElanciaArray, List, ahk_class Nexon.Elancia
@@ -309,6 +314,38 @@ KeyClick(Key){
 			}
 		}
 	}
+
+PostMove(MouseX,MouseY){ 
+    MousePos := MouseX | MouseY<< 16
+    PostMessage, 0x200, 0, %MousePos% ,,%WindowTitle%
+} 
+
+PostClick(MouseX,MouseY){
+    WinGetPos , x, y, Width, Height, %WindowTitle%
+
+    correctX := MouseX 
+    correctY := MouseY - 25
+
+    MousePos := correctX | correctY<< 16
+    PostMessage, 0x200, 0, %MousePos% ,,%WindowTitle%
+    PostMessage, 0x201, 1, %MousePos% ,,%WindowTitle%
+    PostMessage, 0x202, 0, %MousePos% ,,%WindowTitle%
+}
+
+PostClick_Right(MouseX,MouseY){
+    WinGetPos , x, y, Width, Height, %WindowTitle%
+
+    MouseY := MouseY - 12
+
+    correctX := MouseX - x
+    correctY := MouseY -y
+
+    MousePos := correctX | correctY<< 16
+    PostMessage, 0x200, 0, %MousePos% ,,%WindowTitle%
+    PostMessage, 0x204, 1, %MousePos% ,,%WindowTitle%
+    PostMessage, 0x205, 0, %MousePos% ,,%WindowTitle%
+}
+
 
 ;체력회복용 탈것핵
 ride_enable(){
