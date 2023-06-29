@@ -315,16 +315,16 @@ KeyClick(Key){
 		}
 	}
 
-PostMove(MouseX,MouseY){ 
+PostMove(MouseX,MouseY){
     MousePos := MouseX | MouseY<< 16
     PostMessage, 0x200, 0, %MousePos% ,,%WindowTitle%
-} 
+}
 
 PostClick(MouseX,MouseY){
     WinGetPos , x, y, Width, Height, %WindowTitle%
 
-    correctX := MouseX 
-    correctY := MouseY - 25
+    correctX := MouseX
+    correctY := MouseY - 40
 
     MousePos := correctX | correctY<< 16
     PostMessage, 0x200, 0, %MousePos% ,,%WindowTitle%

@@ -1,7 +1,22 @@
-#include helper_methods.ahk
+#include i_miner.ahk
 
-global WindowTitle
+if not A_IsAdmin {
+   MsgBox, 관리자 권한으로 실행해주세요
+   ExitApp
+}
+
+
+#SingleInstance, on
+#NoEnv
+#Persistent
+#KeyHistory 0
+#NoTrayIcon
+#Warn All, Off
+
 global map
+global miner
+global x
+global y
 
 ; gui variables
 ; setting window info section
@@ -24,6 +39,9 @@ gui, add ,text, w200  vtext_map_position, 클릭한 미니맵 위치
 gui, add, text ,w200  vtext_map_name, 맵 이름
 gui, add, text, w200 vtext_position, 캐릭터위치
 gui, add, text, w200 vtext_ismoving, 움직임 여부
+gui, add ,text, w200 vtext_behaviour, 행동 상태 
+gui, add, text, w200 vtext_minimapx, 미니맵x
+gui, add, text, w200 vtext_minimapy, 미니맵y
 
 ; winidow frame
 gui, show, w400 h400, Elancia-miner
@@ -31,7 +49,8 @@ return
 
 start:
 msgbox, 시작했습니다
-
+init()
+miner.mine()
 loop{
     getCharacterStatus()
 }
@@ -39,6 +58,10 @@ return
 
 Stop_this:
 	Coin:=0
+
+    wall_remove_disable()
+    floor_remove_disable()
+    char_remove_disable()
 	return
 
 
@@ -51,6 +74,21 @@ if(checkWindowAvailable(WindowTitle)){
 }
 return
 
+init(){
+WinGetPos , x, y, Width, Height, %WindowTitle%
+setMineralList()
+; set miner
+location := Get_Location()
+GuiControl, , text_map_name, 현재 맵 : %location%
+
+minerFactory := new MinerFactory()
+miner := minerFactory.create(location, mineralList)
+
+wall_remove_enable()
+floor_remove_enable()
+char_remove_enable()
+}
+
 getCharacterStatus(){
 location := Get_Location()
 GuiControl, , text_map_name, 현재 맵 : %location%
@@ -62,6 +100,10 @@ GuiControl, , text_position, 현재 위치 : %posX%, %PosY%
 
 isMoving := is_moving()
 GuiControl, , text_ismoving, 움직임 여부 : %isMoving%
+
+minimapX = getMinimapPosX()
+minimapY = getMinimapPosY()
+
 ;Click_CurrentMiniMapPos(50, 10)
 ;GuiControl, , text_map_position, 클릭한 미니맵 위치 : 50, 10
 }
@@ -99,3 +141,6 @@ return
 
 guiClose:
 ExitApp
+
+F9::
+ ExitApp
